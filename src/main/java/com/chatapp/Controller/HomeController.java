@@ -10,6 +10,6 @@ public class HomeController {
 
     @GetMapping("/")
     public ResponseEntity<String> home() {
-        return new ResponseEntity<String>("Welcome to Chat App", HttpStatus.OK);
+        return new ResponseEntity<String>("Welcome to ChatNexus", HttpStatus.OK);
     }
 }
