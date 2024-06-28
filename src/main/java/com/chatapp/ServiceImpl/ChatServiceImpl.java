@@ -3,9 +3,11 @@ package com.chatapp.ServiceImpl;
 import com.chatapp.Exception.ChatException;
 import com.chatapp.Exception.UserException;
 import com.chatapp.Model.Chat;
+import com.chatapp.Model.Message;
 import com.chatapp.Model.User;
 import com.chatapp.Payload.GroupChatRequest;
 import com.chatapp.Repository.ChatRepository;
+import com.chatapp.Repository.MessageRepository;
 import com.chatapp.Service.ChatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,9 @@ public class ChatServiceImpl implements ChatService {
 
     @Autowired
     private ChatRepository chatRepository;
+
+    @Autowired
+    private MessageRepository messageRepository;
 
     @Override
     public Chat createChat(User reqUser, Integer userId) throws UserException {
@@ -39,20 +44,30 @@ public class ChatServiceImpl implements ChatService {
         chat.getUsers().add(reqUser);
         chat.setGroup(false);
 
-       return this.chatRepository.save(chat);
+        return this.chatRepository.save(chat);
     }
 
     @Override
     public Chat findChatById(Integer chatId) throws ChatException {
-        return this.chatRepository.findById(chatId)
+        Chat chat = this.chatRepository.findById(chatId)
                 .orElseThrow(() -> new ChatException("The requested chat is not found"));
+        List<Message> messages = this.messageRepository.findByChatId(chatId);
+        chat.setMessages(messages);
+        return chat;
     }
 
     @Override
     public List<Chat> findAllChatByUserId(Integer userId) throws UserException {
         User user = this.userService.findUserById(userId);
 
-        return this.chatRepository.findChatByUserId(user.getId());
+        List<Chat> chats = this.chatRepository.findChatByUserId(user.getId());
+
+        chats.forEach(chat -> {
+            List<Message> messages = this.messageRepository.findByChatId(chat.getId());
+            chat.setMessages(messages);
+        });
+
+        return chats;
     }
 
     @Override

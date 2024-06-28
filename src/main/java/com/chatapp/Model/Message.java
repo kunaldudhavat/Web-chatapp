@@ -1,13 +1,8 @@
 package com.chatapp.Model;
 
-
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
 
 @Entity
 public class Message {
@@ -19,11 +14,26 @@ public class Message {
     private LocalDateTime timestamp;
 
     @ManyToOne
+    @JsonBackReference
     private Chat chat;
 
     @ManyToOne
     private User user;
 
+    // Default constructor
+    public Message() {
+    }
+
+    // Parameterized constructor
+    public Message(Integer id, String content, LocalDateTime timestamp, Chat chat, User user) {
+        this.id = id;
+        this.content = content;
+        this.timestamp = timestamp;
+        this.chat = chat;
+        this.user = user;
+    }
+
+    // Getters and Setters
     public Integer getId() {
         return id;
     }
@@ -64,21 +74,9 @@ public class Message {
         this.user = user;
     }
 
-    public Message() {
-    }
-
-    public Message(Integer id, String content, LocalDateTime timestamp, Chat chat, User user) {
-        this.id = id;
-        this.content = content;
-        this.timestamp = timestamp;
-        this.chat = chat;
-        this.user = user;
-    }
-
     @Override
     public String toString() {
         return "Message [id=" + id + ", content=" + content + ", timestamp=" + timestamp + ", chat=" + chat + ", user="
                 + user + "]";
     }
-
 }

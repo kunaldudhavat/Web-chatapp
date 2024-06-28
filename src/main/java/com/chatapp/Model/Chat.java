@@ -1,18 +1,11 @@
 package com.chatapp.Model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 
 @Entity
 public class Chat {
@@ -34,9 +27,28 @@ public class Chat {
     @ManyToMany
     private Set<User> users = new HashSet<>();
 
-    @OneToMany
+    @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Message> messages = new ArrayList<>();
 
+    // Default constructor
+    public Chat() {
+    }
+
+    // Parameterized constructor
+    public Chat(Integer id, String chatName, String chatImage, boolean isGroup, Set<User> admins, User createdBy,
+                Set<User> users, List<Message> messages) {
+        this.id = id;
+        this.chatName = chatName;
+        this.chatImage = chatImage;
+        this.isGroup = isGroup;
+        this.admins = admins;
+        this.createdBy = createdBy;
+        this.users = users;
+        this.messages = messages;
+    }
+
+    // Getters and Setters
     public Integer getId() {
         return id;
     }
@@ -101,26 +113,10 @@ public class Chat {
         this.messages = messages;
     }
 
-    public Chat() {
-    }
-
-    public Chat(Integer id, String chatName, String chatImage, boolean isGroup, Set<User> admins, User createdBy,
-                Set<User> users, List<Message> messages) {
-        this.id = id;
-        this.chatName = chatName;
-        this.chatImage = chatImage;
-        this.isGroup = isGroup;
-        this.admins = admins;
-        this.createdBy = createdBy;
-        this.users = users;
-        this.messages = messages;
-    }
-
     @Override
     public String toString() {
         return "Chat [id=" + id + ", chatName=" + chatName + ", chatImage=" + chatImage + ", isGroup=" + isGroup
                 + ", admins=" + admins + ", createdBy=" + createdBy + ", users=" + users + ", messages=" + messages
                 + "]";
     }
-
 }
