@@ -1,5 +1,6 @@
 package com.chatapp.Model;
 
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -13,8 +14,21 @@ public class User {
     private int id;
     private String name;
     private String email;
-    private String profile;
     private String password;
+
+    @Embedded
+    private Profile profile;
+
+    public User() {
+    }
+
+    public User(int id, String name, String email, String password, Profile profile) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.profile = profile;
+    }
 
     public int getId() {
         return id;
@@ -40,14 +54,6 @@ public class User {
         this.email = email;
     }
 
-    public String getProfile() {
-        return profile;
-    }
-
-    public void setProfile(String profile) {
-        this.profile = profile;
-    }
-
     public String getPassword() {
         return password;
     }
@@ -56,21 +62,16 @@ public class User {
         this.password = password;
     }
 
-    public User() {
+    public Profile getProfile() {
+        return profile;
     }
 
-    public User(int id, String name, String email, String profile, String password) {
-        this.id = id;
-        this.name = name;
-        this.email = email;
+    public void setProfile(Profile profile) {
         this.profile = profile;
-        this.password = password;
     }
 
     @Override
     public String toString() {
-        return "User [id=" + id + ", name=" + name + ", email=" + email + ", profile=" + profile + ", password="
-                + password + "]";
+        return "User [id=" + id + ", name=" + name + ", email=" + email + ", password=" + password + ", profile=" + profile + "]";
     }
-
 }

@@ -1,6 +1,7 @@
 package com.chatapp.ServiceImpl;
 
 import com.chatapp.Exception.UserException;
+import com.chatapp.Model.Profile;
 import com.chatapp.Model.User;
 import com.chatapp.Payload.UpdateUserRequest;
 import com.chatapp.Repository.UserRepository;
@@ -11,9 +12,12 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 @Service
 public class UserServiceImpl implements UserService {
+
+    private static final Logger logger = Logger.getLogger(UserServiceImpl.class.getName());
 
     @Autowired
     private UserRepository userRepository;
@@ -44,6 +48,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User updateUser(Integer userId, UpdateUserRequest req) throws UserException {
+        logger.info("Updating user with ID: " + userId);
+        logger.info("Received update request: " + req.toString());
+
         User user = this.findUserById(userId);
 
         if (req.getName() != null) {
@@ -51,15 +58,34 @@ public class UserServiceImpl implements UserService {
         }
 
         if (req.getProfile() != null) {
-            user.setProfile(req.getProfile());
+            Profile profile = user.getProfile();
+            if (profile == null) {
+                profile = new Profile();
+            }
+            Profile reqProfile = req.getProfile();
+
+            if (reqProfile.getBio() != null) {
+                profile.setBio(reqProfile.getBio());
+            }
+
+            if (reqProfile.getLocation() != null) {
+                profile.setLocation(reqProfile.getLocation());
+            }
+
+            if (reqProfile.getWebsite() != null) {
+                profile.setWebsite(reqProfile.getWebsite());
+            }
+
+            user.setProfile(profile);
         }
-        return this.userRepository.save(user);
+
+        User updatedUser = this.userRepository.save(user);
+        logger.info("Updated user: " + updatedUser.toString());
+        return updatedUser;
     }
 
     @Override
     public List<User> searchUser(String query) {
-        List<User> users = this.userRepository.searchUser(query);
-        return users;
+        return this.userRepository.searchUser(query);
     }
-
 }
