@@ -1,6 +1,7 @@
 package com.chatapp.Controller;
 
 import com.chatapp.Exception.UserException;
+import com.chatapp.Model.Chat;
 import com.chatapp.Payload.ApiResponse;
 import com.chatapp.Payload.UpdateUserRequest;
 import com.chatapp.ServiceImpl.UserServiceImpl;
@@ -23,10 +24,25 @@ public class UserController {
     private UserServiceImpl userService;
 
     @GetMapping("/profile")
-    public ResponseEntity getUserProfileHandler(@RequestHeader("Authorization") String token) throws UserException {
+    public ResponseEntity<User> getUserProfileHandler(@RequestHeader("Authorization") String token) throws UserException {
         logger.info("Fetching profile for token: " + token);
         User user = this.userService.findUserProfile(token);
-        return new ResponseEntity(user, HttpStatus.OK);
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
+    @GetMapping("/profile/{userId}")
+    public ResponseEntity<User> getUserProfileByIdHandler(@PathVariable Integer userId) throws UserException {
+        logger.info("Fetching profile for user ID: " + userId);
+        User user = this.userService.findUserById(userId);
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
+    @GetMapping("/common-groups/{userId}")
+    public ResponseEntity<List<Chat>> getCommonGroupsHandler(@PathVariable Integer userId, @RequestHeader("Authorization") String token) throws UserException {
+        logger.info("Fetching common groups for user ID: " + userId);
+        User currentUser = this.userService.findUserProfile(token);
+        List<Chat> commonGroups = this.userService.findCommonGroups(currentUser.getId(), userId);
+        return new ResponseEntity<>(commonGroups, HttpStatus.OK);
     }
 
     @GetMapping("/{query}")
@@ -37,7 +53,7 @@ public class UserController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity updateUserHandler(@RequestBody UpdateUserRequest request, @RequestHeader("Authorization") String token) throws UserException {
+    public ResponseEntity<ApiResponse> updateUserHandler(@RequestBody UpdateUserRequest request, @RequestHeader("Authorization") String token) throws UserException {
         logger.info("Received update request: " + request.toString());
         User user = this.userService.findUserProfile(token);
         this.userService.updateUser(user.getId(), request);
@@ -46,6 +62,6 @@ public class UserController {
         response.setMessage("User details updated successfully.");
         response.setStatus(true);
 
-        return new ResponseEntity(response, HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
     }
 }

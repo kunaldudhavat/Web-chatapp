@@ -105,4 +105,19 @@ public class UserServiceImpl implements UserService {
 
         return results;
     }
+
+    @Override
+    public List<Chat> findCommonGroups(Integer currentUserId, Integer userId) {
+        List<Chat> currentUserChats = this.chatRepository.findChatByUserId(currentUserId);
+        List<Chat> userChats = this.chatRepository.findChatByUserId(userId);
+        List<Chat> commonGroups = new ArrayList<>();
+
+        for (Chat chat : currentUserChats) {
+            if (chat.isGroup() && userChats.contains(chat)) {
+                commonGroups.add(chat);
+            }
+        }
+        logger.info("Common groups for users " + currentUserId + " and " + userId + ": " + commonGroups);
+        return commonGroups;
+    }
 }
