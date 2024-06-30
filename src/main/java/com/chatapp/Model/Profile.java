@@ -8,14 +8,16 @@ public class Profile {
     private String bio;
     private String location;
     private String website;
+    private String image;
 
     public Profile() {
     }
 
-    public Profile(String bio, String location, String website) {
+    public Profile(String bio, String location, String website, String image) {
         this.bio = bio;
         this.location = location;
         this.website = website;
+        this.image = image;
     }
 
     public String getBio() {
@@ -40,6 +42,14 @@ public class Profile {
 
     public void setWebsite(String website) {
         this.website = website;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     @Override

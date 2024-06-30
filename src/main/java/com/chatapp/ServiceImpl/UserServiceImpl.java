@@ -82,6 +82,10 @@ public class UserServiceImpl implements UserService {
                 profile.setWebsite(reqProfile.getWebsite());
             }
 
+            if (reqProfile.getImage() != null) {
+                profile.setImage(reqProfile.getImage());
+            }
+
             user.setProfile(profile);
         }
 
