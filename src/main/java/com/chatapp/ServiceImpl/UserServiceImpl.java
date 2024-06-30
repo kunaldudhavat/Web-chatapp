@@ -1,9 +1,11 @@
 package com.chatapp.ServiceImpl;
 
 import com.chatapp.Exception.UserException;
+import com.chatapp.Model.Chat;
 import com.chatapp.Model.Profile;
 import com.chatapp.Model.User;
 import com.chatapp.Payload.UpdateUserRequest;
+import com.chatapp.Repository.ChatRepository;
 import com.chatapp.Repository.UserRepository;
 import com.chatapp.Service.UserService;
 import com.chatapp.config.TokenProvider;
@@ -11,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -21,6 +24,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private ChatRepository chatRepository;
 
     @Autowired
     private TokenProvider tokenProvider;
@@ -85,7 +91,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> searchUser(String query) {
-        return this.userRepository.searchUser(query);
+    public List<Object> searchUser(String query) {
+        List<User> users = this.userRepository.searchUser(query);
+        List<Chat> groups = this.chatRepository.searchGroupChats(query);
+
+        List<Object> results = new ArrayList<>();
+        results.addAll(users);
+        results.addAll(groups);
+
+        return results;
     }
 }

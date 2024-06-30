@@ -3,8 +3,6 @@ package com.chatapp.Service;
 import com.chatapp.Exception.UserException;
 import com.chatapp.Model.User;
 import com.chatapp.Payload.UpdateUserRequest;
-import jdk.jshell.spi.ExecutionControl;
-
 import java.util.List;
 
 public interface UserService {
@@ -15,5 +13,5 @@ public interface UserService {
 
     public User updateUser(Integer userId, UpdateUserRequest req) throws UserException;
 
-    public List<User> searchUser(String query);
+    public List<Object> searchUser(String query); // Update to return a list of objects (users and groups)
 }
