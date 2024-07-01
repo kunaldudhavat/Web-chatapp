@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -110,14 +111,12 @@ public class UserServiceImpl implements UserService {
     public List<Chat> findCommonGroups(Integer currentUserId, Integer userId) {
         List<Chat> currentUserChats = this.chatRepository.findChatByUserId(currentUserId);
         List<Chat> userChats = this.chatRepository.findChatByUserId(userId);
-        List<Chat> commonGroups = new ArrayList<>();
 
-        for (Chat chat : currentUserChats) {
-            if (chat.isGroup() && userChats.contains(chat)) {
-                commonGroups.add(chat);
-            }
-        }
-        logger.info("Common groups for users " + currentUserId + " and " + userId + ": " + commonGroups);
-        return commonGroups;
+        // Filter only group chats and find intersection
+
+        return currentUserChats.stream()
+                .filter(Chat::isGroup)
+                .filter(userChats::contains)
+                .collect(Collectors.toList());
     }
 }

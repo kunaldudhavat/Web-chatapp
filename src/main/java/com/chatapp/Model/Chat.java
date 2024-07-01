@@ -16,6 +16,7 @@ public class Chat {
 
     private String chatName;
     private String chatImage;
+    private String description;
     private boolean isGroup;
 
     @ManyToMany
@@ -36,11 +37,12 @@ public class Chat {
     }
 
     // Parameterized constructor
-    public Chat(Integer id, String chatName, String chatImage, boolean isGroup, Set<User> admins, User createdBy,
+    public Chat(Integer id, String chatName, String chatImage, String description, boolean isGroup, Set<User> admins, User createdBy,
                 Set<User> users, List<Message> messages) {
         this.id = id;
         this.chatName = chatName;
         this.chatImage = chatImage;
+        this.description = description;
         this.isGroup = isGroup;
         this.admins = admins;
         this.createdBy = createdBy;
@@ -71,6 +73,14 @@ public class Chat {
 
     public void setChatImage(String chatImage) {
         this.chatImage = chatImage;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public boolean isGroup() {
@@ -115,8 +125,8 @@ public class Chat {
 
     @Override
     public String toString() {
-        return "Chat [id=" + id + ", chatName=" + chatName + ", chatImage=" + chatImage + ", isGroup=" + isGroup
-                + ", admins=" + admins + ", createdBy=" + createdBy + ", users=" + users + ", messages=" + messages
-                + "]";
+        return "Chat [id=" + id + ", chatName=" + chatName + ", chatImage=" + chatImage + ", description=" + description
+                + ", isGroup=" + isGroup + ", admins=" + admins + ", createdBy=" + createdBy + ", users=" + users
+                + ", messages=" + messages + "]";
     }
 }

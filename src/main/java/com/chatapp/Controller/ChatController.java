@@ -66,6 +66,15 @@ public class ChatController {
         return new ResponseEntity<List<Chat>>(chats, HttpStatus.OK);
     }
 
+    @GetMapping("/group/{groupId}")
+    public ResponseEntity<Chat> getGroupProfile(@PathVariable Integer groupId) throws ChatException {
+        Chat group = this.chatService.findChatById(groupId);
+        if (!group.isGroup()) {
+            throw new ChatException("The requested chat is not a group");
+        }
+        return new ResponseEntity<>(group, HttpStatus.OK);
+    }
+
     @PutMapping("/{chatId}/add/{userId}")
     public ResponseEntity<Chat> addUserToGroupHandler(@PathVariable Integer chatId,
                                                       @PathVariable Integer userId, @RequestHeader("Authorization") String jwt)
@@ -80,7 +89,7 @@ public class ChatController {
 
     @PutMapping("/{chatId}/remove/{userId}")
     public ResponseEntity<Chat> removeUserFromGroupHandler(@PathVariable Integer chatId,
-                                                           @PathVariable Integer userId, @RequestHeader("Authoriation") String jwt) throws UserException, ChatException {
+                                                           @PathVariable Integer userId, @RequestHeader("Authorization") String jwt) throws UserException, ChatException {
         User reqUser = this.userService.findUserProfile(jwt);
 
         Chat chat = this.chatService.removeFromGroup(userId, chatId, reqUser);
@@ -91,7 +100,7 @@ public class ChatController {
     @DeleteMapping("/delete/{chatId}")
     public ResponseEntity<ApiResponse> deleteChatHandler(@PathVariable Integer chatId,
                                                          @RequestHeader("Authorization") String jwt)
-        throws UserException, ChatException {
+            throws UserException, ChatException {
 
         User reqUser = this.userService.findUserProfile(jwt);
 
@@ -101,4 +110,16 @@ public class ChatController {
 
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
+
+    @PutMapping("/update-group/{chatId}")
+    public ResponseEntity<ApiResponse> updateGroupHandler(@PathVariable Integer chatId,
+                                                          @RequestBody GroupChatRequest groupChatRequest,
+                                                          @RequestHeader("Authorization") String jwt) throws UserException, ChatException {
+        User reqUser = this.userService.findUserProfile(jwt);
+        this.chatService.updateGroup(chatId, groupChatRequest, reqUser);
+
+        ApiResponse response = new ApiResponse("Group details updated successfully.", true);
+        return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
+    }
+
 }

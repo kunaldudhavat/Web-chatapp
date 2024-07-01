@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ChatRepository extends JpaRepository<Chat, Integer> {
 
@@ -18,4 +19,7 @@ public interface ChatRepository extends JpaRepository<Chat, Integer> {
 
     @Query("select c from Chat c where c.isGroup=true and c.chatName like %:query%")
     public List<Chat> searchGroupChats(@Param("query") String query);
+
+    @Query("select c from Chat c where c.id = :chatId and c.isGroup = true")
+    public Optional<Chat> findGroupById(@Param("chatId") Integer chatId);
 }

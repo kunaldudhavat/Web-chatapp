@@ -138,4 +138,40 @@ public class ChatServiceImpl implements ChatService {
                 .orElseThrow(() -> new ChatException("The chat you're trying to delete is not found"));
         this.chatRepository.delete(chat);
     }
+
+    @Override
+    public Chat findGroupById(Integer chatId) throws ChatException {
+        return this.chatRepository.findGroupById(chatId)
+                .orElseThrow(() -> new ChatException("The requested group is not found"));
+    }
+
+    @Override
+    public Chat updateGroup(Integer chatId, GroupChatRequest req, User reqUser) throws ChatException, UserException {
+        Chat chat = this.chatRepository.findById(chatId)
+                .orElseThrow(() -> new ChatException("The expected chat is not found"));
+
+        if (!chat.isGroup()) {
+            throw new ChatException("The expected chat is not a group");
+        }
+
+        if (!chat.getUsers().contains(reqUser)) {
+            throw new UserException("You don't have permission to update the group");
+        }
+
+        if (req.getChatName() != null) {
+            chat.setChatName(req.getChatName());
+        }
+
+        if (req.getChatImage() != null) {
+            chat.setChatImage(req.getChatImage());
+        }
+
+        if (req.getDescription() != null) {
+            chat.setDescription(req.getDescription());
+        }
+
+        return this.chatRepository.save(chat);
+    }
+
+
 }
